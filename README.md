@@ -1,0 +1,1 @@
+# Pydantic models for generating JSON schemas for neuroglancer data structures
