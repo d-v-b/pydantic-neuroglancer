@@ -1,55 +1,74 @@
-from pydantic import BaseModel
-from typing import Dict, Optional, Literal, List, Tuple, Union
+from pydantic import BaseModel, Extra, GenericModel
+from typing import Dict, Generic, Optional, Literal, List, Tuple, TypeVar, Union
 from enum import Enum
 
 PointType = Tuple[float, float, float]
-LayerType = Literal['image', 'segmentation']
-DataPanelLayoutTypes = Literal['xy', 'yz', 'xz', 'xy-3d', 'yz-3d', 'xz-3d', '4panel', '3d']
-NavigationLinkType = Literal['linked', 'unlinked', 'relative']
+LayerType = Literal["image", "segmentation"]
+DataPanelLayoutTypes = Literal[
+    "xy", "yz", "xz", "xy-3d", "yz-3d", "xz-3d", "4panel", "3d"
+]
 
-class UnitQuaternion(BaseModel):
+NavigationLinkType = Literal["linked", "unlinked", "relative"]
+
+T = TypeVar("T")
+
+
+class Linked(GenericModel(config=Extra.forbid), Generic[T]):
+    link: Optional[NavigationLinkType] = "linked"
+    value: Optional[T]
+
+
+class Model(BaseModel):
+    class Config:
+        extra = Extra.forbid
+
+class UnitQuaternion(Model):
     pass
 
+
 class ToolNameEnum(str, Enum):
-    annotatePoint = 'annotatePoint'
-    annotateLine = 'annotateLine'
-    annotateBoundingBox = 'annotateBoundingBox'
-    annotateSphere = 'annotateSphere'
-    blend = 'blend'
-    opacity = 'opacity'
-    crossSectionRenderScale = 'crossSectionRenderScale'
-    selectedAlpha = 'selectedAlpha'
-    notSelectedAlpha = 'notSelectedAlpha'
-    objectAlpha = 'objectAlpha'
-    hideSegmentZero = 'hideSegmentZero'
-    baseSegmentColoring = 'baseSegmentColoring'
-    ignoreNullVisibleSet = 'ignoreNullVisibleSet'
-    colorSeed = 'colorSeed'
-    segmentDefaultColor = 'segmentDefaultColor'
-    meshRenderScale = 'meshRenderScale'
-    saturation = 'saturation'
-    skeletonRendering_mode2d = 'skeletonRendering.mode2d'
-    skeletonRendering_lineWidth2d = 'skeletonRendering.lineWidth2d'
-    skeletonRendering_lineWidth3d = 'skeletonRendering.lineWidth3d'
-    shaderControl = 'shaderControl'
-    mergeSegments = 'mergeSegments'
-    splitSegments = 'splitSegments'
-    selectSegments = 'selectSegments'
+    annotatePoint = "annotatePoint"
+    annotateLine = "annotateLine"
+    annotateBoundingBox = "annotateBoundingBox"
+    annotateSphere = "annotateSphere"
+    blend = "blend"
+    opacity = "opacity"
+    crossSectionRenderScale = "crossSectionRenderScale"
+    selectedAlpha = "selectedAlpha"
+    notSelectedAlpha = "notSelectedAlpha"
+    objectAlpha = "objectAlpha"
+    hideSegmentZero = "hideSegmentZero"
+    baseSegmentColoring = "baseSegmentColoring"
+    ignoreNullVisibleSet = "ignoreNullVisibleSet"
+    colorSeed = "colorSeed"
+    segmentDefaultColor = "segmentDefaultColor"
+    meshRenderScale = "meshRenderScale"
+    saturation = "saturation"
+    skeletonRendering_mode2d = "skeletonRendering.mode2d"
+    skeletonRendering_lineWidth2d = "skeletonRendering.lineWidth2d"
+    skeletonRendering_lineWidth3d = "skeletonRendering.lineWidth3d"
+    shaderControl = "shaderControl"
+    mergeSegments = "mergeSegments"
+    splitSegments = "splitSegments"
+    selectSegments = "selectSegments"
 
 
-class Tool(BaseModel):
+class Tool(Model):
     type: ToolNameEnum
+
 
 class ControlTool(Tool):
     control: str
 
-class SidePanelLocation(BaseModel):
+
+class SidePanelLocation(Model):
     flex: Optional[float] = 1.0
     side: Optional[str]
     visible: Optional[bool]
     size: Optional[int]
     row: Optional[int]
     col = Optional[int]
+
 
 class SelectedLayerState(SidePanelLocation):
     layer: Optional[str]
@@ -58,23 +77,29 @@ class SelectedLayerState(SidePanelLocation):
 class StatisticsDisplayState(SidePanelLocation):
     pass
 
+
 class LayerSidePanelState(SidePanelLocation):
     tab: Optional[str]
     tabs: List[str]
 
+
 class HelpPanelState(SidePanelLocation):
     pass
+
 
 class LayerListPanelState(SidePanelLocation):
     pass
 
-class CoordinateSpace(BaseModel):
+
+class CoordinateSpace(Model):
     pass
 
-class LayerSidePanelState(BaseModel):
+
+class LayerSidePanelState(Model):
     pass
 
-class Layer(BaseModel):
+
+class Layer(Model):
     type: Optional[LayerType]
     layerDimensions: CoordinateSpace
     layerPosition: Optional[float]
@@ -83,50 +108,59 @@ class Layer(BaseModel):
     tool_bindings: Dict[str, Tool]
     tool: Optional[Tool]
 
+
 class PointAnnotationLayer(Layer):
     points: List[PointType]
 
-class CoordinateSpaceTransform(BaseModel):
+
+class CoordinateSpaceTransform(Model):
     outputDimensions: CoordinateSpace
     inputDimensions: Optional[CoordinateSpace]
     sourceRank: Optional[int]
     matrix: List[List[int]]
 
-class LayerDataSubsource(BaseModel):
+
+class LayerDataSubsource(Model):
     enabled: bool
 
-class LayerDataSource(BaseModel):
-    url: URL
+
+class LayerDataSource(Model):
+    url: str
     transform: Optional[CoordinateSpaceTransform]
     subsources: Dict[str, LayerDataSubsource]
     enableDefaultSubsources: Optional[bool] = True
 
-class AnnotationLayerOptions(BaseModel):
+
+class AnnotationLayerOptions(Model):
     annotationColor: Optional[str]
 
-class InvlerpParameters(BaseModel):
+
+class InvlerpParameters(Model):
     range: Optional[Tuple[float, float]]
     window: Optional[Tuple[float, float]]
     channel: Optional[List[int]]
 
+
 ShaderControls = Union[float, str, InvlerpParameters]
 
-class ImageLayer(Layer)    :
+
+class ImageLayer(Layer):
     source: List[LayerDataSource]
     shader: str
     shaderControls: ShaderControls
-    opacity: float = .05
+    opacity: float = 0.05
     blend: Optional[str]
     crossSectionRenderScale: Optional[float] = 1.0
 
 
-class SkeletonRenderingOptions(BaseModel):
+class SkeletonRenderingOptions(Model):
     shader: str
-    shaderControls:  ShaderControls
+    shaderControls: ShaderControls
     mode2d: Optional[str]
     lineWidth2d: Optional[float] = 2.0
     mode3d: Optional[str]
     lineWidth3d: Optional[float] = 1.0
+
 
 class SegmentationLayer(Layer):
     segments: List[int]
@@ -146,36 +180,46 @@ class SegmentationLayer(Layer):
     segmentColors: Dict[int, str]
     segmentDefaultColor: str
     linkedSegmentationGroup: Optional[str]
-    linkedSegmentationColorGroup: Optional[Union[str, Literal[False]]
+    linkedSegmentationColorGroup: Optional[Union[str, Literal[False]]]
+
 
 class SingleMeshLayer(Layer):
     vertexAttributeSources: Optional[List[str]]
     shader: str
-    vertexAttributeNames: Optional[List[Union[str, None]]
+    vertexAttributeNames: Optional[List[Union[str, None]]]
 
-class AnnotationBase(BaseModel):
+
+class AnnotationBase(Model):
     id: Optional[str]
     type: str
     description: Optional[str]
     segments: Optional[List[int]]
     props: List[Union[int, str]]
 
+
 class PointAnnotation(AnnotationBase):
     point: List[float]
+
 
 class LineAnnotation(AnnotationBase):
     pointA: List[float]
     pointB: List[float]
 
+
 AxisAlignedBoundingBoxAnnotation = LineAnnotation
 
-class EllipseAnnotation(AnnotationBase):
+
+class EllipsoidAnnotation(AnnotationBase):
     center: List[float]
     radii: List[float]
 
-Annotations = Union[PointAnnotation, LineAnnotation, EllipsoidAnnotation, AxisAlignedBoundBoxAnnotation]
 
-class AnnotationPropertySpec(BaseModel):
+Annotations = Union[
+    PointAnnotation, LineAnnotation, EllipsoidAnnotation, AxisAlignedBoundingBoxAnnotation
+]
+
+
+class AnnotationPropertySpec(Model):
     id: str
     type: str
     description: Optional[str]
@@ -186,7 +230,7 @@ class AnnotationPropertySpec(BaseModel):
 
 class AnnotationLayer(Layer, AnnotationLayerOptions):
     source: List[LayerDataSource]
-    annotations: List[Annotations] 
+    annotations: List[Annotations]
     annotationProperties: List[AnnotationPropertySpec]
     annotationRelationships: List[str]
     linkedSegmentationLayer: Dict[str, str]
@@ -195,32 +239,29 @@ class AnnotationLayer(Layer, AnnotationLayerOptions):
     shader: str
     shaderControls: ShaderControls
 
-LayerTypes = Union[ImagerLayer,
-                   SegmentationLayer,
-                   PointAnnotationLayer,
-                   AnnotationLayer,
-                   SingleMeshLayer]
+
+LayerTypes = Union[
+    ImageLayer,
+    SegmentationLayer,
+    PointAnnotationLayer,
+    AnnotationLayer,
+    SingleMeshLayer,
+]
+
+class CrossSection(Model):
+    width: int = 1000
+    height: int = 1000
+    position: Linked[List[float]]
+    orientation: Linked[Tuple[float, float, float, float]]
+    scale: Linked[float]
 
 
-class DataPanelLayout(BaseModel):
+class DataPanelLayout(Model):
     type: str
-    crossSections: CrossSectionMap
+    crossSections: Dict[str, CrossSection]
     orthographicProjection: Optional[bool]
 
-
-LayoutSpecification = Union[str, StackLayout, LayerGroupViewer, DataPanelLayout]
-
-class StackLayout(BaseModel):
-    type: Literal['row', 'column']
-    children: List[LayoutSpecification]
-
-T = TypeVar('T')
-class Linked(GenericModel, Generic[T]):
-    link: Optional[NavigationLinkType] = 'linked'
-    value: Optional[T]
-
-
-class LayerGroupViewer(BaseModel):
+class LayerGroupViewer(Model):
     type: str
     layers: List[str]
     layout: DataPanelLayout
@@ -233,7 +274,13 @@ class LayerGroupViewer(BaseModel):
     projectionDepth: Linked[float]
 
 
-class ViewerState(BaseModel):
+class StackLayout(Model):
+    type: Literal["row", "column"]
+    children: List['LayoutSpecification']
+
+LayoutSpecification = Union[str, StackLayout, LayerGroupViewer, DataPanelLayout]
+
+class ViewerState(Model):
     title: Optional[str]
     dimensions: CoordinateSpace
     relativeDisplayScales: Optional[Dict[str, float]]
