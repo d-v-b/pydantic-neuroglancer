@@ -1,4 +1,6 @@
-from pydantic import BaseModel, Extra, GenericModel
+import argparse
+from pydantic import BaseModel, Extra
+from pydantic.generics import GenericModel
 from typing import Dict, Generic, Optional, Literal, List, Tuple, TypeVar, Union
 from enum import Enum
 
@@ -13,7 +15,7 @@ NavigationLinkType = Literal["linked", "unlinked", "relative"]
 T = TypeVar("T")
 
 
-class Linked(GenericModel(config=Extra.forbid), Generic[T]):
+class Linked(GenericModel, Generic[T]):
     link: Optional[NavigationLinkType] = "linked"
     value: Optional[T]
 
@@ -67,7 +69,7 @@ class SidePanelLocation(Model):
     visible: Optional[bool]
     size: Optional[int]
     row: Optional[int]
-    col = Optional[int]
+    # col = Optional[int]
 
 
 class SelectedLayerState(SidePanelLocation):
@@ -309,3 +311,9 @@ class ViewerState(Model):
     helpPanel: HelpPanelState
     layerListPanel: LayerListPanelState
     partialViewport: Optional[Tuple[float, float, float, float]] = (0, 0, 1, 1)
+
+def main():
+    print(ViewerState.schema_json(indent=2))
+
+if __name__ == '__main__':
+    main()
