@@ -1,5 +1,3 @@
-from lib2to3.pytree import Base
-from urllib.error import URLError
 from pydantic import BaseModel
 from typing import Dict, Optional, Literal, List, Tuple, Union
 from enum import Enum
@@ -8,6 +6,9 @@ PointType = Tuple[float, float, float]
 LayerType = Literal['image', 'segmentation']
 DataPanelLayoutTypes = Literal['xy', 'yz', 'xz', 'xy-3d', 'yz-3d', 'xz-3d', '4panel', '3d']
 NavigationLinkType = Literal['linked', 'unlinked', 'relative']
+
+class UnitQuaternion(BaseModel):
+    pass
 
 class ToolNameEnum(str, Enum):
     annotatePoint = 'annotatePoint'
@@ -209,6 +210,29 @@ class DataPanelLayout(BaseModel):
 
 LayoutSpecification = Union[str, StackLayout, LayerGroupViewer, DataPanelLayout]
 
+class StackLayout(BaseModel):
+    type: Literal['row', 'column']
+    children: List[LayoutSpecification]
+
+T = TypeVar('T')
+class Linked(GenericModel, Generic[T]):
+    link: Optional[NavigationLinkType] = 'linked'
+    value: Optional[T]
+
+
+class LayerGroupViewer(BaseModel):
+    type: str
+    layers: List[str]
+    layout: DataPanelLayout
+    position: Linked[List[float]]
+    crossSectionOrientation: Linked[Tuple[float, float, float, float]]
+    crossSectionScale: Linked[float]
+    crossSectionDepth: Linked[float]
+    projectionOrientation: Linked[Tuple[float, float, float, float]]
+    projectionScale: Linked[float]
+    projectionDepth: Linked[float]
+
+
 class ViewerState(BaseModel):
     title: Optional[str]
     dimensions: CoordinateSpace
@@ -231,18 +255,10 @@ class ViewerState(BaseModel):
     prefetch: Optional[bool] = True
     layers: List[Layer]
     layout: LayoutSpecification
-
-class StackLayout(BaseModel):
-    type: Literal['row', 'column']
-    children: List[LayoutSpecification]
-
-T = TypeVar('T')
-class LinkedType(GenericModel, Generic[T]):
-    link: Optional[NavigationLinkType] = 'linked'
-    value: Optional[T]
-
-class LayerGroupViewer(BaseModel):
-    type: str
-    layers: List[str]
-    layout: DataPanelLayout
-    position: 
+    crossSectionBackgroundColor: Optional[str]
+    projectionBackgroundColor: Optional[str]
+    selectedLayer: SelectedLayerState
+    statistics: StatisticsDisplayState
+    helpPanel: HelpPanelState
+    layerListPanel: LayerListPanelState
+    partialViewport: Optional[Tuple[float, float, float, float]] = (0, 0, 1, 1)
