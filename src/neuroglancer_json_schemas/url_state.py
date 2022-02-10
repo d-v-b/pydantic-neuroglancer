@@ -18,18 +18,24 @@ import re
 import urllib
 import numbers
 
+from pydantic import ValidationError
+
 from .viewer_state import ViewerState
 
-default_neuroglancer_url = u'https://neuroglancer-demo.appspot.com'
+default_neuroglancer_url = "https://neuroglancer-demo.appspot.com"
 
-SINGLE_QUOTE_STRING_PATTERN = u'(\'(?:[^\'\\\\]|(?:\\\\.))*\')'
-DOUBLE_QUOTE_STRING_PATTERN = u'("(?:[^"\\\\]|(?:\\\\.))*")'
-SINGLE_OR_DOUBLE_QUOTE_STRING_PATTERN = SINGLE_QUOTE_STRING_PATTERN + u'|' + DOUBLE_QUOTE_STRING_PATTERN
-DOUBLE_OR_SINGLE_QUOTE_STRING_PATTERN = DOUBLE_QUOTE_STRING_PATTERN + u'|' + SINGLE_QUOTE_STRING_PATTERN
+SINGLE_QUOTE_STRING_PATTERN = "('(?:[^'\\\\]|(?:\\\\.))*')"
+DOUBLE_QUOTE_STRING_PATTERN = '("(?:[^"\\\\]|(?:\\\\.))*")'
+SINGLE_OR_DOUBLE_QUOTE_STRING_PATTERN = (
+    SINGLE_QUOTE_STRING_PATTERN + "|" + DOUBLE_QUOTE_STRING_PATTERN
+)
+DOUBLE_OR_SINGLE_QUOTE_STRING_PATTERN = (
+    DOUBLE_QUOTE_STRING_PATTERN + "|" + SINGLE_QUOTE_STRING_PATTERN
+)
 
 
-DOUBLE_QUOTE_PATTERN = u'^((?:[^"\'\\\\]|(?:\\\\.))*)"'
-SINGLE_QUOTE_PATTERN = u'^((?:[^"\'\\\\]|(?:\\\\.))*)\''
+DOUBLE_QUOTE_PATTERN = '^((?:[^"\'\\\\]|(?:\\\\.))*)"'
+SINGLE_QUOTE_PATTERN = "^((?:[^\"'\\\\]|(?:\\\\.))*)'"
 
 min_safe_integer = -9007199254740991
 max_safe_integer = 9007199254740991
@@ -37,7 +43,9 @@ max_safe_integer = 9007199254740991
 
 def json_encoder_default(obj):
     """JSON encoder function that handles some numpy types."""
-    if isinstance(obj, numbers.Integral) and (obj < min_safe_integer or obj > max_safe_integer):
+    if isinstance(obj, numbers.Integral) and (
+        obj < min_safe_integer or obj > max_safe_integer
+    ):
         return str(obj)
     elif isinstance(obj, (set, frozenset)):
         return list(obj)
@@ -66,37 +74,39 @@ def _convert_string_literal(x, quote_initial, quote_replace, quote_search):
                 s += inner
                 break
             s += m.group(1)
-            s += u'\\'
+            s += "\\"
             s += quote_replace
-            inner = inner[m.end():]
+            inner = inner[m.end() :]
         s += quote_replace
         return s
     return x
 
 
 def _convert_json_helper(x, desired_comma_char, desired_quote_char):
-    comma_search = u'[&_,]'
-    if desired_quote_char == u'"':
-        quote_initial = u'\''
+    comma_search = "[&_,]"
+    if desired_quote_char == '"':
+        quote_initial = "'"
         quote_search = DOUBLE_QUOTE_PATTERN
         string_literal_pattern = SINGLE_OR_DOUBLE_QUOTE_STRING_PATTERN
     else:
-        quote_initial = u'"'
+        quote_initial = '"'
         quote_search = SINGLE_QUOTE_PATTERN
         string_literal_pattern = DOUBLE_OR_SINGLE_QUOTE_STRING_PATTERN
-    s = u''
+    s = ""
     while x:
         m = re.search(string_literal_pattern, x)
         if m is None:
             before = x
-            x = u''
-            replacement = u''
+            x = ""
+            replacement = ""
         else:
-            before = x[:m.start()]
-            x = x[m.end():]
+            before = x[: m.start()]
+            x = x[m.end() :]
             original_string = m.group(1)
             if original_string is not None:
-                replacement = _convert_string_literal(original_string, quote_initial, desired_quote_char, quote_search)
+                replacement = _convert_string_literal(
+                    original_string, quote_initial, desired_quote_char, quote_search
+                )
             else:
                 replacement = m.group(2)
         s += re.sub(comma_search, desired_comma_char, before)
@@ -105,37 +115,50 @@ def _convert_json_helper(x, desired_comma_char, desired_quote_char):
 
 
 def url_safe_to_json(x):
-    return _convert_json_helper(x, u',', u'"')
+    return _convert_json_helper(x, ",", '"')
+
 
 def json_to_url_safe(x):
-    return _convert_json_helper(x, u'_', u'\'')
+    return _convert_json_helper(x, "_", "'")
+
 
 def url_fragment_to_json(fragment_value):
     unquoted = urllib.parse.unquote(fragment_value)
-    if unquoted.startswith('!'):
+    if unquoted.startswith("!"):
         unquoted = unquoted[1:]
     return url_safe_to_json(unquoted)
 
 
 def parse_url_fragment(fragment_value):
     json_string = url_fragment_to_json(fragment_value)
-    print(json_string)
-    return ViewerState(
-        **json.loads(json_string, object_pairs_hook=collections.OrderedDict))
+    try:
+        vs = ViewerState(**json.loads(json_string))
+    except ValidationError as e:
+        print(json.dumps(json.loads(json_string), indent=2))
+        raise e
+    return vs
 
 
 def parse_url(url):
     result = urllib.parse.urlparse(url)
     return parse_url_fragment(result.fragment)
 
+
 def to_url_fragment(state):
-    json_string = json.dumps(to_json(state), separators=(u',', u':'), default=json_encoder_default)
-    return urllib.parse.quote(json_string, safe=u'~@#$&()*!+=:;,.?/\'')
+    json_string = json.dumps(
+        to_json(state), separators=(",", ":"), default=json_encoder_default
+    )
+    return urllib.parse.quote(json_string, safe="~@#$&()*!+=:;,.?/'")
+
 
 def to_url(state, prefix=default_neuroglancer_url):
-    return u'%s#!%s' % (prefix, to_url_fragment(state))
+    return "%s#!%s" % (prefix, to_url_fragment(state))
+
 
 def to_json_dump(state, indent=None, separators=None):
-    return json.dumps(to_json(state), separators=separators,
-                      indent=indent,
-                      default=json_encoder_default)
+    return json.dumps(
+        to_json(state),
+        separators=separators,
+        indent=indent,
+        default=json_encoder_default,
+    )

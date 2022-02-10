@@ -5,7 +5,7 @@ from typing_extensions import Annotated
 from enum import Enum
 
 PointType = Tuple[float, float, float]
-LayerType = Literal["new", "image", "segmentation", "annotation"]
+LayerType = Literal["new", "image", "segmentation", "annotation", "mesh"]
 DataPanelLayoutTypes = Literal[
     "xy", "yz", "xz", "xy-3d", "yz-3d", "xz-3d", "4panel", "3d"
 ]
@@ -15,6 +15,8 @@ NavigationLinkType = Literal["linked", "unlinked", "relative"]
 T = TypeVar("T")
 
 Quaternion = Tuple[float, float, float, float]
+
+
 class Linked(GenericModel, Generic[T]):
     link: Optional[NavigationLinkType] = "linked"
     value: Optional[T]
@@ -70,7 +72,7 @@ class SidePanelLocation(Model):
     visible: Optional[bool]
     size: Optional[int]
     row: Optional[int]
-    # col = Optional[int]
+    col: Optional[int]
 
 
 class SelectedLayerState(SidePanelLocation):
@@ -118,12 +120,12 @@ class CoordinateSpaceTransform(Model):
 class LayerDataSource(Model):
     url: str
     transform: Optional[CoordinateSpaceTransform]
-    subsources: Dict[str, LayerDataSubsource]
+    subsources: Dict[str, bool]
     enableDefaultSubsources: Optional[bool] = True
 
 
 class Layer(Model):
-    source: Union[str, LayerDataSource]
+    source: List[Union[str, LayerDataSource]] | Union[str, LayerDataSource]
     name: str
     visible: Optional[bool]
     tab: Optional[str]
@@ -150,14 +152,15 @@ class InvlerpParameters(Model):
     channel: Optional[List[int]]
 
 
-ShaderControls = Union[float, str, InvlerpParameters]
+ShaderControls = Union[float, str, InvlerpParameters, Dict[str, float]]
+
 
 class NewLayer(Layer):
-    type: Literal['new']
+    type: Literal["new"]
 
 
 class ImageLayer(Layer):
-    type: Literal['image']
+    type: Literal["image"]
     shader: Optional[str]
     shaderControls: Optional[ShaderControls]
     opacity: float = 0.05
@@ -175,7 +178,7 @@ class SkeletonRenderingOptions(Model):
 
 
 class SegmentationLayer(Layer):
-    type: Literal['segmentation']
+    type: Literal["segmentation"]
     segments: Optional[List[int]]
     equivalences: Optional[Dict[int, int]]
     hideSegmentZero: Optional[bool] = True
@@ -196,7 +199,8 @@ class SegmentationLayer(Layer):
     linkedSegmentationColorGroup: Optional[Union[str, Literal[False]]]
 
 
-class SingleMeshLayer(Layer):
+class MeshLayer(Layer):
+    type: Literal["mesh"]
     vertexAttributeSources: Optional[List[str]]
     shader: str
     vertexAttributeNames: Optional[List[Union[str, None]]]
@@ -245,7 +249,7 @@ class AnnotationPropertySpec(Model):
 
 
 class AnnotationLayer(Layer, AnnotationLayerOptions):
-    type: Literal['annotation']
+    type: Literal["annotation"]
     annotations: Optional[List[Annotations]]
     annotationProperties: Optional[List[AnnotationPropertySpec]]
     annotationRelationships: Optional[List[str]]
@@ -256,12 +260,15 @@ class AnnotationLayer(Layer, AnnotationLayerOptions):
     shaderControls: Optional[ShaderControls]
 
 
-LayerTypes = Union[
-    ImageLayer,
-    SegmentationLayer,
-    PointAnnotationLayer,
-    AnnotationLayer,
-    SingleMeshLayer,
+LayerType = Annotated[
+    Union[
+        ImageLayer,
+        SegmentationLayer,
+        AnnotationLayer,
+        MeshLayer,
+        NewLayer,
+    ],
+    Field(discriminator="type"),
 ]
 
 
@@ -300,7 +307,6 @@ class StackLayout(Model):
     children: List[LayoutSpecification]
 
 
-LayerType = Annotated[Union[ImageLayer, SegmentationLayer, AnnotationLayer, NewLayer], Field(discriminator='type')]
 class ViewerState(Model):
     title: Optional[str]
     dimensions: Optional[CoordinateSpace]
@@ -325,7 +331,7 @@ class ViewerState(Model):
     layout: LayoutSpecification
     crossSectionBackgroundColor: Optional[str]
     projectionBackgroundColor: Optional[str]
-    selectedLayer: SelectedLayerState
+    selectedLayer: Optional[SelectedLayerState]
     statistics: Optional[StatisticsDisplayState]
     helpPanel: Optional[HelpPanelState]
     layerListPanel: Optional[LayerListPanelState]
