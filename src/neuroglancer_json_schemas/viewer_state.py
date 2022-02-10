@@ -1,11 +1,11 @@
-import argparse
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, Extra, Field
 from pydantic.generics import GenericModel
 from typing import Dict, Generic, Optional, Literal, List, Tuple, TypeVar, Union
+from typing_extensions import Annotated
 from enum import Enum
 
 PointType = Tuple[float, float, float]
-LayerType = Literal["image", "segmentation"]
+LayerType = Literal["new", "image", "segmentation", "annotation"]
 DataPanelLayoutTypes = Literal[
     "xy", "yz", "xz", "xy-3d", "yz-3d", "xz-3d", "4panel", "3d"
 ]
@@ -14,7 +14,7 @@ NavigationLinkType = Literal["linked", "unlinked", "relative"]
 
 T = TypeVar("T")
 
-
+Quaternion = Tuple[float, float, float, float]
 class Linked(GenericModel, Generic[T]):
     link: Optional[NavigationLinkType] = "linked"
     value: Optional[T]
@@ -23,6 +23,7 @@ class Linked(GenericModel, Generic[T]):
 class Model(BaseModel):
     class Config:
         extra = Extra.forbid
+
 
 class UnitQuaternion(Model):
     pass
@@ -93,26 +94,18 @@ class LayerListPanelState(SidePanelLocation):
     pass
 
 
-class CoordinateSpace(Model):
-    pass
+class CoordinateArray(Model):
+    coordinates: List[str]
+    labels: List[str]
 
 
-class LayerSidePanelState(Model):
-    pass
+DimensionScale = Union[Tuple[float, str], Tuple[None, None, CoordinateArray]]
+
+CoordinateSpace = Dict[str, DimensionScale]
 
 
-class Layer(Model):
-    type: Optional[LayerType]
-    layerDimensions: CoordinateSpace
-    layerPosition: Optional[float]
-    panels: List[LayerSidePanelState]
-    pick: Optional[bool]
-    tool_bindings: Dict[str, Tool]
-    tool: Optional[Tool]
-
-
-class PointAnnotationLayer(Layer):
-    points: List[PointType]
+class LayerDataSubsource(Model):
+    enabled: bool
 
 
 class CoordinateSpaceTransform(Model):
@@ -122,15 +115,29 @@ class CoordinateSpaceTransform(Model):
     matrix: List[List[int]]
 
 
-class LayerDataSubsource(Model):
-    enabled: bool
-
-
 class LayerDataSource(Model):
     url: str
     transform: Optional[CoordinateSpaceTransform]
     subsources: Dict[str, LayerDataSubsource]
     enableDefaultSubsources: Optional[bool] = True
+
+
+class Layer(Model):
+    source: Union[str, LayerDataSource]
+    name: str
+    visible: Optional[bool]
+    tab: Optional[str]
+    type: Optional[LayerType]
+    layerDimensions: Optional[CoordinateSpace]
+    layerPosition: Optional[float]
+    panels: Optional[List[LayerSidePanelState]]
+    pick: Optional[bool]
+    tool_bindings: Optional[Dict[str, Tool]]
+    tool: Optional[Tool]
+
+
+class PointAnnotationLayer(Layer):
+    points: List[PointType]
 
 
 class AnnotationLayerOptions(Model):
@@ -145,11 +152,14 @@ class InvlerpParameters(Model):
 
 ShaderControls = Union[float, str, InvlerpParameters]
 
+class NewLayer(Layer):
+    type: Literal['new']
+
 
 class ImageLayer(Layer):
-    source: List[LayerDataSource]
-    shader: str
-    shaderControls: ShaderControls
+    type: Literal['image']
+    shader: Optional[str]
+    shaderControls: Optional[ShaderControls]
     opacity: float = 0.05
     blend: Optional[str]
     crossSectionRenderScale: Optional[float] = 1.0
@@ -165,22 +175,23 @@ class SkeletonRenderingOptions(Model):
 
 
 class SegmentationLayer(Layer):
-    segments: List[int]
-    equivalences: Dict[int, int]
+    type: Literal['segmentation']
+    segments: Optional[List[int]]
+    equivalences: Optional[Dict[int, int]]
     hideSegmentZero: Optional[bool] = True
     selectedAlpha: Optional[float] = 0.5
     notSelectedAlpha: Optional[float] = 0.0
     objectAlpha: Optional[float] = 1.0
     saturation: Optional[float] = 1.0
     ignoreNullVisibleSet: Optional[bool] = True
-    skeletonRendering: SkeletonRenderingOptions
+    skeletonRendering: Optional[SkeletonRenderingOptions]
     colorSeed: Optional[int] = 0
     crossSectionRenderScale: Optional[float] = 1.0
     meshRenderScale: Optional[float] = 10.0
     meshSilhouetteRendering: Optional[float] = 0.0
     segmentQuery: Optional[str]
-    segmentColors: Dict[int, str]
-    segmentDefaultColor: str
+    segmentColors: Optional[Dict[int, str]]
+    segmentDefaultColor: Optional[str]
     linkedSegmentationGroup: Optional[str]
     linkedSegmentationColorGroup: Optional[Union[str, Literal[False]]]
 
@@ -217,7 +228,10 @@ class EllipsoidAnnotation(AnnotationBase):
 
 
 Annotations = Union[
-    PointAnnotation, LineAnnotation, EllipsoidAnnotation, AxisAlignedBoundingBoxAnnotation
+    PointAnnotation,
+    LineAnnotation,
+    EllipsoidAnnotation,
+    AxisAlignedBoundingBoxAnnotation,
 ]
 
 
@@ -231,15 +245,15 @@ class AnnotationPropertySpec(Model):
 
 
 class AnnotationLayer(Layer, AnnotationLayerOptions):
-    source: List[LayerDataSource]
-    annotations: List[Annotations]
-    annotationProperties: List[AnnotationPropertySpec]
-    annotationRelationships: List[str]
+    type: Literal['annotation']
+    annotations: Optional[List[Annotations]]
+    annotationProperties: Optional[List[AnnotationPropertySpec]]
+    annotationRelationships: Optional[List[str]]
     linkedSegmentationLayer: Dict[str, str]
     filterBySegmentation: List[str]
     ignoreNullSegmentFilter: Optional[bool] = True
-    shader: str
-    shaderControls: ShaderControls
+    shader: Optional[str]
+    shaderControls: Optional[ShaderControls]
 
 
 LayerTypes = Union[
@@ -250,11 +264,12 @@ LayerTypes = Union[
     SingleMeshLayer,
 ]
 
+
 class CrossSection(Model):
     width: int = 1000
     height: int = 1000
     position: Linked[List[float]]
-    orientation: Linked[Tuple[float, float, float, float]]
+    orientation: Linked[Quaternion]
     scale: Linked[float]
 
 
@@ -263,12 +278,13 @@ class DataPanelLayout(Model):
     crossSections: Dict[str, CrossSection]
     orthographicProjection: Optional[bool]
 
+
 class LayerGroupViewer(Model):
     type: str
     layers: List[str]
     layout: DataPanelLayout
     position: Linked[List[float]]
-    crossSectionOrientation: Linked[Tuple[float, float, float, float]]
+    crossSectionOrientation: Linked[Quaternion]
     crossSectionScale: Linked[float]
     crossSectionDepth: Linked[float]
     projectionOrientation: Linked[Tuple[float, float, float, float]]
@@ -276,24 +292,27 @@ class LayerGroupViewer(Model):
     projectionDepth: Linked[float]
 
 
+LayoutSpecification = Union[str, LayerGroupViewer, DataPanelLayout]
+
+
 class StackLayout(Model):
     type: Literal["row", "column"]
-    children: List['LayoutSpecification']
+    children: List[LayoutSpecification]
 
-LayoutSpecification = Union[str, StackLayout, LayerGroupViewer, DataPanelLayout]
 
+LayerType = Annotated[Union[ImageLayer, SegmentationLayer, AnnotationLayer, NewLayer], Field(discriminator='type')]
 class ViewerState(Model):
     title: Optional[str]
-    dimensions: CoordinateSpace
+    dimensions: Optional[CoordinateSpace]
     relativeDisplayScales: Optional[Dict[str, float]]
     displayDimensions: Optional[List[str]]
-    position: Tuple[float, float, float]
-    crossSectionOrientation: Optional[Tuple[float, float, float, float]]
+    position: Optional[Tuple[float, float, float]]
+    crossSectionOrientation: Optional[Quaternion]
     crossSectionScale: Optional[float]
     crossSectionDepth: Optional[float]
     projectionScale: Optional[float]
     projectionDeth: Optional[float]
-    projectionOrientation: Tuple[float, float, float, float]
+    projectionOrientation: Optional[Quaternion]
     showSlices: Optional[bool] = True
     showAxisLines: Optional[bool] = True
     showScaleBar: Optional[bool] = True
@@ -302,18 +321,21 @@ class ViewerState(Model):
     systemMemoryLimit: Optional[int]
     concurrentDownloads: Optional[int]
     prefetch: Optional[bool] = True
-    layers: List[Layer]
+    layers: List[LayerType]
     layout: LayoutSpecification
     crossSectionBackgroundColor: Optional[str]
     projectionBackgroundColor: Optional[str]
     selectedLayer: SelectedLayerState
-    statistics: StatisticsDisplayState
-    helpPanel: HelpPanelState
-    layerListPanel: LayerListPanelState
-    partialViewport: Optional[Tuple[float, float, float, float]] = (0, 0, 1, 1)
+    statistics: Optional[StatisticsDisplayState]
+    helpPanel: Optional[HelpPanelState]
+    layerListPanel: Optional[LayerListPanelState]
+    partialViewport: Optional[Quaternion] = (0, 0, 1, 1)
+    selection: Optional[Dict[str, int]]
+
 
 def main():
     print(ViewerState.schema_json(indent=2))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
