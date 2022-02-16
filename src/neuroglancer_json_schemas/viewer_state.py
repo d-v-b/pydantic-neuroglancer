@@ -179,7 +179,7 @@ class SkeletonRenderingOptions(Model):
 
 class SegmentationLayer(Layer):
     type: Literal["segmentation"]
-    segments: Optional[List[int]]
+    segments: Optional[List[str]]
     equivalences: Optional[Dict[int, int]]
     hideSegmentZero: Optional[bool] = True
     selectedAlpha: Optional[float] = 0.5

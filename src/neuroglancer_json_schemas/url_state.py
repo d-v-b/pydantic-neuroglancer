@@ -144,9 +144,9 @@ def parse_url(url):
     return parse_url_fragment(result.fragment)
 
 
-def to_url_fragment(state):
+def to_url_fragment(state: ViewerState):
     json_string = json.dumps(
-        to_json(state), separators=(",", ":"), default=json_encoder_default
+        state.json(), separators=(",", ":"), default=json_encoder_default
     )
     return urllib.parse.quote(json_string, safe="~@#$&()*!+=:;,.?/'")
 
