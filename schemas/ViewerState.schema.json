@@ -871,7 +871,7 @@
           "title": "Segments",
           "type": "array",
           "items": {
-            "type": "integer"
+            "type": "string"
           }
         },
         "equivalences": {
