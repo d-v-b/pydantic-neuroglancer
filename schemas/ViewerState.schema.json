@@ -1652,8 +1652,8 @@
       ],
       "additionalProperties": false
     },
-    "Linked_List_float__": {
-      "title": "Linked[List[float]]",
+    "Linked_list_float__": {
+      "title": "Linked[list[float]]",
       "type": "object",
       "properties": {
         "link": {
@@ -1746,7 +1746,7 @@
           "type": "integer"
         },
         "position": {
-          "$ref": "#/definitions/Linked_List_float__"
+          "$ref": "#/definitions/Linked_list_float__"
         },
         "orientation": {
           "$ref": "#/definitions/Linked_Tuple_float__float__float__float__"
@@ -1788,6 +1788,42 @@
       ],
       "additionalProperties": false
     },
+    "Linked_tuple_float__float__float__float__": {
+      "title": "Linked[tuple[float, float, float, float]]",
+      "type": "object",
+      "properties": {
+        "link": {
+          "title": "Link",
+          "default": "linked",
+          "enum": [
+            "linked",
+            "unlinked",
+            "relative"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        }
+      }
+    },
     "LayerGroupViewer": {
       "title": "LayerGroupViewer",
       "type": "object",
@@ -1807,7 +1843,7 @@
           "$ref": "#/definitions/DataPanelLayout"
         },
         "position": {
-          "$ref": "#/definitions/Linked_List_float__"
+          "$ref": "#/definitions/Linked_list_float__"
         },
         "crossSectionOrientation": {
           "$ref": "#/definitions/Linked_Tuple_float__float__float__float__"
@@ -1819,7 +1855,7 @@
           "$ref": "#/definitions/Linked_float_"
         },
         "projectionOrientation": {
-          "$ref": "#/definitions/Linked_Tuple_float__float__float__float__"
+          "$ref": "#/definitions/Linked_tuple_float__float__float__float__"
         },
         "projectionScale": {
           "$ref": "#/definitions/Linked_float_"
