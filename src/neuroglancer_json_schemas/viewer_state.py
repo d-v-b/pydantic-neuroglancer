@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Extra, Field
 from pydantic.generics import GenericModel
-from typing import Dict, Generic, Optional, Literal, List, Tuple, TypeVar, Union
+from typing import Generic, Literal, Tuple, TypeVar, Union
 from typing_extensions import Annotated
 from enum import Enum
 
@@ -18,8 +18,8 @@ Quaternion = Tuple[float, float, float, float]
 
 
 class Linked(GenericModel, Generic[T]):
-    link: Optional[NavigationLinkType] = "linked"
-    value: Optional[T]
+    link: NavigationLinkType | None = "linked"
+    value: T | None
 
 
 class Model(BaseModel):
@@ -119,27 +119,27 @@ class CoordinateSpaceTransform(Model):
 
 class LayerDataSource(Model):
     url: str
-    transform: Optional[CoordinateSpaceTransform]
-    subsources: Dict[str, bool]
+    transform: CoordinateSpaceTransform | None
+    subsources: dict[str, bool]
     enableDefaultSubsources: bool | None = True
 
 
 class Layer(Model):
-    source: List[Union[str, LayerDataSource]] | Union[str, LayerDataSource]
+    source: list[str | LayerDataSource]
     name: str
     visible: bool | None
     tab: str | None
     type: LayerType | None
     layerDimensions: CoordinateSpace | None
     layerPosition: float | None
-    panels: List[LayerSidePanelState] | None
+    panels: list[LayerSidePanelState] | None
     pick: bool | None
-    tool_bindings: Dict[str, Tool] | None
+    tool_bindings: dict[str, Tool] | None
     tool: Tool | None
 
 
 class PointAnnotationLayer(Layer):
-    points: List[PointType]
+    points: list[PointType]
 
 
 class AnnotationLayerOptions(Model):
@@ -152,7 +152,7 @@ class InvlerpParameters(Model):
     channel: list[int] | None
 
 
-ShaderControls = Union[float, str, InvlerpParameters, Dict[str, float]]
+ShaderControls = float | str | InvlerpParameters | dict[str, float]
 
 
 class NewLayer(Layer):
