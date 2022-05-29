@@ -125,7 +125,7 @@ class LayerDataSource(Model):
 
 
 class Layer(Model):
-    source: list[str | LayerDataSource]
+    source: str | LayerDataSource | list[str | LayerDataSource]
     name: str
     visible: bool | None
     tab: str | None
