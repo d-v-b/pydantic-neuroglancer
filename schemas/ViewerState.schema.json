@@ -423,8 +423,7 @@
         }
       },
       "required": [
-        "url",
-        "subsources"
+        "url"
       ],
       "additionalProperties": false
     },
@@ -881,7 +880,14 @@
           "title": "Segments",
           "type": "array",
           "items": {
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ]
           }
         },
         "equivalences": {

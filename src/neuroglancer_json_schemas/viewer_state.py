@@ -120,7 +120,7 @@ class CoordinateSpaceTransform(Model):
 class LayerDataSource(Model):
     url: str
     transform: CoordinateSpaceTransform | None
-    subsources: dict[str, bool]
+    subsources: dict[str, bool] | None
     enableDefaultSubsources: bool | None = True
 
 
@@ -179,7 +179,7 @@ class SkeletonRenderingOptions(Model):
 
 class SegmentationLayer(Layer):
     type: Literal["segmentation"]
-    segments: list[str] | None
+    segments: list[str | int] | None # the order of the types in the union matters -- str | int works, but int | str does not
     equivalences: dict[int, int] | None
     hideSegmentZero: bool | None = True
     selectedAlpha: float | None = 0.5
