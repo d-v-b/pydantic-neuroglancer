@@ -1,0 +1,2030 @@
+{
+  "title": "ViewerState",
+  "type": "object",
+  "properties": {
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "dimensions": {
+      "title": "Dimensions",
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/definitions/CoordinateArray"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "relativeDisplayScales": {
+      "title": "Relativedisplayscales",
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "displayDimensions": {
+      "title": "Displaydimensions",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "position": {
+      "title": "Position",
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ]
+    },
+    "crossSectionOrientation": {
+      "title": "Crosssectionorientation",
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ]
+    },
+    "crossSectionScale": {
+      "title": "Crosssectionscale",
+      "type": "number"
+    },
+    "crossSectionDepth": {
+      "title": "Crosssectiondepth",
+      "type": "number"
+    },
+    "projectionScale": {
+      "title": "Projectionscale",
+      "type": "number"
+    },
+    "projectionDeth": {
+      "title": "Projectiondeth",
+      "type": "number"
+    },
+    "projectionOrientation": {
+      "title": "Projectionorientation",
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ]
+    },
+    "showSlices": {
+      "title": "Showslices",
+      "default": true,
+      "type": "boolean"
+    },
+    "showAxisLines": {
+      "title": "Showaxislines",
+      "default": true,
+      "type": "boolean"
+    },
+    "showScaleBar": {
+      "title": "Showscalebar",
+      "default": true,
+      "type": "boolean"
+    },
+    "showDefaultAnnotations": {
+      "title": "Showdefaultannotations",
+      "default": true,
+      "type": "boolean"
+    },
+    "gpuMemoryLimit": {
+      "title": "Gpumemorylimit",
+      "type": "integer"
+    },
+    "systemMemoryLimit": {
+      "title": "Systemmemorylimit",
+      "type": "integer"
+    },
+    "concurrentDownloads": {
+      "title": "Concurrentdownloads",
+      "type": "integer"
+    },
+    "prefetch": {
+      "title": "Prefetch",
+      "default": true,
+      "type": "boolean"
+    },
+    "layers": {
+      "title": "Layers",
+      "type": "array",
+      "items": {
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "image": "#/definitions/ImageLayer",
+            "segmentation": "#/definitions/SegmentationLayer",
+            "annotation": "#/definitions/AnnotationLayer",
+            "mesh": "#/definitions/MeshLayer",
+            "new": "#/definitions/NewLayer"
+          }
+        },
+        "anyOf": [
+          {
+            "$ref": "#/definitions/ImageLayer"
+          },
+          {
+            "$ref": "#/definitions/SegmentationLayer"
+          },
+          {
+            "$ref": "#/definitions/AnnotationLayer"
+          },
+          {
+            "$ref": "#/definitions/MeshLayer"
+          },
+          {
+            "$ref": "#/definitions/NewLayer"
+          }
+        ]
+      }
+    },
+    "layout": {
+      "title": "Layout",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/definitions/LayerGroupViewer"
+        },
+        {
+          "$ref": "#/definitions/DataPanelLayout"
+        }
+      ]
+    },
+    "crossSectionBackgroundColor": {
+      "title": "Crosssectionbackgroundcolor",
+      "type": "string"
+    },
+    "projectionBackgroundColor": {
+      "title": "Projectionbackgroundcolor",
+      "type": "string"
+    },
+    "selectedLayer": {
+      "$ref": "#/definitions/SelectedLayerState"
+    },
+    "statistics": {
+      "$ref": "#/definitions/StatisticsDisplayState"
+    },
+    "helpPanel": {
+      "$ref": "#/definitions/HelpPanelState"
+    },
+    "layerListPanel": {
+      "$ref": "#/definitions/LayerListPanelState"
+    },
+    "partialViewport": {
+      "title": "Partialviewport",
+      "default": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ]
+    },
+    "selection": {
+      "title": "Selection",
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer"
+      }
+    }
+  },
+  "required": [
+    "layers",
+    "layout"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "CoordinateArray": {
+      "title": "CoordinateArray",
+      "type": "object",
+      "properties": {
+        "coordinates": {
+          "title": "Coordinates",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "labels": {
+          "title": "Labels",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "coordinates",
+        "labels"
+      ],
+      "additionalProperties": false
+    },
+    "CoordinateSpaceTransform": {
+      "title": "CoordinateSpaceTransform",
+      "type": "object",
+      "properties": {
+        "outputDimensions": {
+          "title": "Outputdimensions",
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/definitions/CoordinateArray"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "inputDimensions": {
+          "title": "Inputdimensions",
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/definitions/CoordinateArray"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "sourceRank": {
+          "title": "Sourcerank",
+          "type": "integer"
+        },
+        "matrix": {
+          "title": "Matrix",
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "required": [
+        "outputDimensions",
+        "matrix"
+      ],
+      "additionalProperties": false
+    },
+    "LayerDataSource": {
+      "title": "LayerDataSource",
+      "type": "object",
+      "properties": {
+        "url": {
+          "title": "Url",
+          "type": "string"
+        },
+        "transform": {
+          "$ref": "#/definitions/CoordinateSpaceTransform"
+        },
+        "subsources": {
+          "title": "Subsources",
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "enableDefaultSubsources": {
+          "title": "Enabledefaultsubsources",
+          "default": true,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false
+    },
+    "LayerSidePanelState": {
+      "title": "LayerSidePanelState",
+      "type": "object",
+      "properties": {
+        "flex": {
+          "title": "Flex",
+          "default": 1.0,
+          "type": "number"
+        },
+        "side": {
+          "title": "Side",
+          "type": "string"
+        },
+        "visible": {
+          "title": "Visible",
+          "type": "boolean"
+        },
+        "size": {
+          "title": "Size",
+          "type": "integer"
+        },
+        "row": {
+          "title": "Row",
+          "type": "integer"
+        },
+        "col": {
+          "title": "Col",
+          "type": "integer"
+        },
+        "tab": {
+          "title": "Tab",
+          "type": "string"
+        },
+        "tabs": {
+          "title": "Tabs",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "tabs"
+      ],
+      "additionalProperties": false
+    },
+    "ToolNameEnum": {
+      "title": "ToolNameEnum",
+      "description": "An enumeration.",
+      "enum": [
+        "annotatePoint",
+        "annotateLine",
+        "annotateBoundingBox",
+        "annotateSphere",
+        "blend",
+        "opacity",
+        "crossSectionRenderScale",
+        "selectedAlpha",
+        "notSelectedAlpha",
+        "objectAlpha",
+        "hideSegmentZero",
+        "baseSegmentColoring",
+        "ignoreNullVisibleSet",
+        "colorSeed",
+        "segmentDefaultColor",
+        "meshRenderScale",
+        "saturation",
+        "skeletonRendering.mode2d",
+        "skeletonRendering.lineWidth2d",
+        "skeletonRendering.lineWidth3d",
+        "shaderControl",
+        "mergeSegments",
+        "splitSegments",
+        "selectSegments"
+      ],
+      "type": "string"
+    },
+    "Tool": {
+      "title": "Tool",
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/ToolNameEnum"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "InvlerpParameters": {
+      "title": "InvlerpParameters",
+      "type": "object",
+      "properties": {
+        "range": {
+          "title": "Range",
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "window": {
+          "title": "Window",
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "channel": {
+          "title": "Channel",
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "ImageLayer": {
+      "title": "ImageLayer",
+      "type": "object",
+      "properties": {
+        "source": {
+          "title": "Source",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/LayerDataSource"
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/definitions/LayerDataSource"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "visible": {
+          "title": "Visible",
+          "type": "boolean"
+        },
+        "tab": {
+          "title": "Tab",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "enum": [
+            "image"
+          ],
+          "type": "string"
+        },
+        "layerDimensions": {
+          "title": "Layerdimensions",
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/definitions/CoordinateArray"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "layerPosition": {
+          "title": "Layerposition",
+          "type": "number"
+        },
+        "panels": {
+          "title": "Panels",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LayerSidePanelState"
+          }
+        },
+        "pick": {
+          "title": "Pick",
+          "type": "boolean"
+        },
+        "tool_bindings": {
+          "title": "Tool Bindings",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Tool"
+          }
+        },
+        "tool": {
+          "$ref": "#/definitions/Tool"
+        },
+        "shader": {
+          "title": "Shader",
+          "type": "string"
+        },
+        "shaderControls": {
+          "title": "Shadercontrols",
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/InvlerpParameters"
+            },
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "number"
+              }
+            }
+          ]
+        },
+        "opacity": {
+          "title": "Opacity",
+          "default": 0.05,
+          "type": "number"
+        },
+        "blend": {
+          "title": "Blend",
+          "type": "string"
+        },
+        "crossSectionRenderScale": {
+          "title": "Crosssectionrenderscale",
+          "default": 1.0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "source",
+        "name",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "SkeletonRenderingOptions": {
+      "title": "SkeletonRenderingOptions",
+      "type": "object",
+      "properties": {
+        "shader": {
+          "title": "Shader",
+          "type": "string"
+        },
+        "shaderControls": {
+          "title": "Shadercontrols",
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/InvlerpParameters"
+            },
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "number"
+              }
+            }
+          ]
+        },
+        "mode2d": {
+          "title": "Mode2D",
+          "type": "string"
+        },
+        "lineWidth2d": {
+          "title": "Linewidth2D",
+          "default": 2.0,
+          "type": "number"
+        },
+        "mode3d": {
+          "title": "Mode3D",
+          "type": "string"
+        },
+        "lineWidth3d": {
+          "title": "Linewidth3D",
+          "default": 1.0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "shader",
+        "shaderControls"
+      ],
+      "additionalProperties": false
+    },
+    "SegmentationLayer": {
+      "title": "SegmentationLayer",
+      "type": "object",
+      "properties": {
+        "source": {
+          "title": "Source",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/LayerDataSource"
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/definitions/LayerDataSource"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "visible": {
+          "title": "Visible",
+          "type": "boolean"
+        },
+        "tab": {
+          "title": "Tab",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "enum": [
+            "segmentation"
+          ],
+          "type": "string"
+        },
+        "layerDimensions": {
+          "title": "Layerdimensions",
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/definitions/CoordinateArray"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "layerPosition": {
+          "title": "Layerposition",
+          "type": "number"
+        },
+        "panels": {
+          "title": "Panels",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LayerSidePanelState"
+          }
+        },
+        "pick": {
+          "title": "Pick",
+          "type": "boolean"
+        },
+        "tool_bindings": {
+          "title": "Tool Bindings",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Tool"
+          }
+        },
+        "tool": {
+          "$ref": "#/definitions/Tool"
+        },
+        "segments": {
+          "title": "Segments",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          }
+        },
+        "equivalences": {
+          "title": "Equivalences",
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "hideSegmentZero": {
+          "title": "Hidesegmentzero",
+          "default": true,
+          "type": "boolean"
+        },
+        "selectedAlpha": {
+          "title": "Selectedalpha",
+          "default": 0.5,
+          "type": "number"
+        },
+        "notSelectedAlpha": {
+          "title": "Notselectedalpha",
+          "default": 0.0,
+          "type": "number"
+        },
+        "objectAlpha": {
+          "title": "Objectalpha",
+          "default": 1.0,
+          "type": "number"
+        },
+        "saturation": {
+          "title": "Saturation",
+          "default": 1.0,
+          "type": "number"
+        },
+        "ignoreNullVisibleSet": {
+          "title": "Ignorenullvisibleset",
+          "default": true,
+          "type": "boolean"
+        },
+        "skeletonRendering": {
+          "$ref": "#/definitions/SkeletonRenderingOptions"
+        },
+        "colorSeed": {
+          "title": "Colorseed",
+          "default": 0,
+          "type": "integer"
+        },
+        "crossSectionRenderScale": {
+          "title": "Crosssectionrenderscale",
+          "default": 1.0,
+          "type": "number"
+        },
+        "meshRenderScale": {
+          "title": "Meshrenderscale",
+          "default": 10.0,
+          "type": "number"
+        },
+        "meshSilhouetteRendering": {
+          "title": "Meshsilhouetterendering",
+          "default": 0.0,
+          "type": "number"
+        },
+        "segmentQuery": {
+          "title": "Segmentquery",
+          "type": "string"
+        },
+        "segmentColors": {
+          "title": "Segmentcolors",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "segmentDefaultColor": {
+          "title": "Segmentdefaultcolor",
+          "type": "string"
+        },
+        "linkedSegmentationGroup": {
+          "title": "Linkedsegmentationgroup",
+          "type": "string"
+        },
+        "linkedSegmentationColorGroup": {
+          "title": "Linkedsegmentationcolorgroup",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "enum": [
+                false
+              ],
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "required": [
+        "source",
+        "name",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "PointAnnotation": {
+      "title": "PointAnnotation",
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "segments": {
+          "title": "Segments",
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "props": {
+          "title": "Props",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "point": {
+          "title": "Point",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "props",
+        "point"
+      ],
+      "additionalProperties": false
+    },
+    "LineAnnotation": {
+      "title": "LineAnnotation",
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "segments": {
+          "title": "Segments",
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "props": {
+          "title": "Props",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "pointA": {
+          "title": "Pointa",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "pointB": {
+          "title": "Pointb",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "props",
+        "pointA",
+        "pointB"
+      ],
+      "additionalProperties": false
+    },
+    "EllipsoidAnnotation": {
+      "title": "EllipsoidAnnotation",
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "segments": {
+          "title": "Segments",
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "props": {
+          "title": "Props",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "center": {
+          "title": "Center",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "radii": {
+          "title": "Radii",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "props",
+        "center",
+        "radii"
+      ],
+      "additionalProperties": false
+    },
+    "AnnotationPropertySpec": {
+      "title": "AnnotationPropertySpec",
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "default": {
+          "title": "Default",
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "enum_values": {
+          "title": "Enum Values",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "enum_labels": {
+          "title": "Enum Labels",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "AnnotationLayer": {
+      "title": "AnnotationLayer",
+      "type": "object",
+      "properties": {
+        "annotationColor": {
+          "title": "Annotationcolor",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/LayerDataSource"
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/definitions/LayerDataSource"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "visible": {
+          "title": "Visible",
+          "type": "boolean"
+        },
+        "tab": {
+          "title": "Tab",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "enum": [
+            "annotation"
+          ],
+          "type": "string"
+        },
+        "layerDimensions": {
+          "title": "Layerdimensions",
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/definitions/CoordinateArray"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "layerPosition": {
+          "title": "Layerposition",
+          "type": "number"
+        },
+        "panels": {
+          "title": "Panels",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LayerSidePanelState"
+          }
+        },
+        "pick": {
+          "title": "Pick",
+          "type": "boolean"
+        },
+        "tool_bindings": {
+          "title": "Tool Bindings",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Tool"
+          }
+        },
+        "tool": {
+          "$ref": "#/definitions/Tool"
+        },
+        "annotations": {
+          "title": "Annotations",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/PointAnnotation"
+              },
+              {
+                "$ref": "#/definitions/LineAnnotation"
+              },
+              {
+                "$ref": "#/definitions/EllipsoidAnnotation"
+              }
+            ]
+          }
+        },
+        "annotationProperties": {
+          "title": "Annotationproperties",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AnnotationPropertySpec"
+          }
+        },
+        "annotationRelationships": {
+          "title": "Annotationrelationships",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "linkedSegmentationLayer": {
+          "title": "Linkedsegmentationlayer",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "filterBySegmentation": {
+          "title": "Filterbysegmentation",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ignoreNullSegmentFilter": {
+          "title": "Ignorenullsegmentfilter",
+          "default": true,
+          "type": "boolean"
+        },
+        "shader": {
+          "title": "Shader",
+          "type": "string"
+        },
+        "shaderControls": {
+          "title": "Shadercontrols",
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/InvlerpParameters"
+            },
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "number"
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "source",
+        "name",
+        "type",
+        "linkedSegmentationLayer",
+        "filterBySegmentation"
+      ],
+      "additionalProperties": false
+    },
+    "MeshLayer": {
+      "title": "MeshLayer",
+      "type": "object",
+      "properties": {
+        "source": {
+          "title": "Source",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/LayerDataSource"
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/definitions/LayerDataSource"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "visible": {
+          "title": "Visible",
+          "type": "boolean"
+        },
+        "tab": {
+          "title": "Tab",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "enum": [
+            "mesh"
+          ],
+          "type": "string"
+        },
+        "layerDimensions": {
+          "title": "Layerdimensions",
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/definitions/CoordinateArray"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "layerPosition": {
+          "title": "Layerposition",
+          "type": "number"
+        },
+        "panels": {
+          "title": "Panels",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LayerSidePanelState"
+          }
+        },
+        "pick": {
+          "title": "Pick",
+          "type": "boolean"
+        },
+        "tool_bindings": {
+          "title": "Tool Bindings",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Tool"
+          }
+        },
+        "tool": {
+          "$ref": "#/definitions/Tool"
+        },
+        "vertexAttributeSources": {
+          "title": "Vertexattributesources",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "shader": {
+          "title": "Shader",
+          "type": "string"
+        },
+        "vertexAttributeNames": {
+          "title": "Vertexattributenames",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "source",
+        "name",
+        "type",
+        "shader"
+      ],
+      "additionalProperties": false
+    },
+    "NewLayer": {
+      "title": "NewLayer",
+      "type": "object",
+      "properties": {
+        "source": {
+          "title": "Source",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/LayerDataSource"
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/definitions/LayerDataSource"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "visible": {
+          "title": "Visible",
+          "type": "boolean"
+        },
+        "tab": {
+          "title": "Tab",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "enum": [
+            "new"
+          ],
+          "type": "string"
+        },
+        "layerDimensions": {
+          "title": "Layerdimensions",
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/definitions/CoordinateArray"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "layerPosition": {
+          "title": "Layerposition",
+          "type": "number"
+        },
+        "panels": {
+          "title": "Panels",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LayerSidePanelState"
+          }
+        },
+        "pick": {
+          "title": "Pick",
+          "type": "boolean"
+        },
+        "tool_bindings": {
+          "title": "Tool Bindings",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Tool"
+          }
+        },
+        "tool": {
+          "$ref": "#/definitions/Tool"
+        }
+      },
+      "required": [
+        "source",
+        "name",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "Linked_list_float__": {
+      "title": "Linked[list[float]]",
+      "type": "object",
+      "properties": {
+        "link": {
+          "title": "Link",
+          "default": "linked",
+          "enum": [
+            "linked",
+            "unlinked",
+            "relative"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "Linked_Tuple_float__float__float__float__": {
+      "title": "Linked[Tuple[float, float, float, float]]",
+      "type": "object",
+      "properties": {
+        "link": {
+          "title": "Link",
+          "default": "linked",
+          "enum": [
+            "linked",
+            "unlinked",
+            "relative"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        }
+      }
+    },
+    "Linked_float_": {
+      "title": "Linked[float]",
+      "type": "object",
+      "properties": {
+        "link": {
+          "title": "Link",
+          "default": "linked",
+          "enum": [
+            "linked",
+            "unlinked",
+            "relative"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      }
+    },
+    "CrossSection": {
+      "title": "CrossSection",
+      "type": "object",
+      "properties": {
+        "width": {
+          "title": "Width",
+          "default": 1000,
+          "type": "integer"
+        },
+        "height": {
+          "title": "Height",
+          "default": 1000,
+          "type": "integer"
+        },
+        "position": {
+          "$ref": "#/definitions/Linked_list_float__"
+        },
+        "orientation": {
+          "$ref": "#/definitions/Linked_Tuple_float__float__float__float__"
+        },
+        "scale": {
+          "$ref": "#/definitions/Linked_float_"
+        }
+      },
+      "required": [
+        "position",
+        "orientation",
+        "scale"
+      ],
+      "additionalProperties": false
+    },
+    "DataPanelLayout": {
+      "title": "DataPanelLayout",
+      "type": "object",
+      "properties": {
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "crossSections": {
+          "title": "Crosssections",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/CrossSection"
+          }
+        },
+        "orthographicProjection": {
+          "title": "Orthographicprojection",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type",
+        "crossSections"
+      ],
+      "additionalProperties": false
+    },
+    "Linked_tuple_float__float__float__float__": {
+      "title": "Linked[tuple[float, float, float, float]]",
+      "type": "object",
+      "properties": {
+        "link": {
+          "title": "Link",
+          "default": "linked",
+          "enum": [
+            "linked",
+            "unlinked",
+            "relative"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        }
+      }
+    },
+    "LayerGroupViewer": {
+      "title": "LayerGroupViewer",
+      "type": "object",
+      "properties": {
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "layers": {
+          "title": "Layers",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "layout": {
+          "$ref": "#/definitions/DataPanelLayout"
+        },
+        "position": {
+          "$ref": "#/definitions/Linked_list_float__"
+        },
+        "crossSectionOrientation": {
+          "$ref": "#/definitions/Linked_Tuple_float__float__float__float__"
+        },
+        "crossSectionScale": {
+          "$ref": "#/definitions/Linked_float_"
+        },
+        "crossSectionDepth": {
+          "$ref": "#/definitions/Linked_float_"
+        },
+        "projectionOrientation": {
+          "$ref": "#/definitions/Linked_tuple_float__float__float__float__"
+        },
+        "projectionScale": {
+          "$ref": "#/definitions/Linked_float_"
+        },
+        "projectionDepth": {
+          "$ref": "#/definitions/Linked_float_"
+        }
+      },
+      "required": [
+        "type",
+        "layers",
+        "layout",
+        "position",
+        "crossSectionOrientation",
+        "crossSectionScale",
+        "crossSectionDepth",
+        "projectionOrientation",
+        "projectionScale",
+        "projectionDepth"
+      ],
+      "additionalProperties": false
+    },
+    "SelectedLayerState": {
+      "title": "SelectedLayerState",
+      "type": "object",
+      "properties": {
+        "flex": {
+          "title": "Flex",
+          "default": 1.0,
+          "type": "number"
+        },
+        "side": {
+          "title": "Side",
+          "type": "string"
+        },
+        "visible": {
+          "title": "Visible",
+          "type": "boolean"
+        },
+        "size": {
+          "title": "Size",
+          "type": "integer"
+        },
+        "row": {
+          "title": "Row",
+          "type": "integer"
+        },
+        "col": {
+          "title": "Col",
+          "type": "integer"
+        },
+        "layer": {
+          "title": "Layer",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "StatisticsDisplayState": {
+      "title": "StatisticsDisplayState",
+      "type": "object",
+      "properties": {
+        "flex": {
+          "title": "Flex",
+          "default": 1.0,
+          "type": "number"
+        },
+        "side": {
+          "title": "Side",
+          "type": "string"
+        },
+        "visible": {
+          "title": "Visible",
+          "type": "boolean"
+        },
+        "size": {
+          "title": "Size",
+          "type": "integer"
+        },
+        "row": {
+          "title": "Row",
+          "type": "integer"
+        },
+        "col": {
+          "title": "Col",
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "HelpPanelState": {
+      "title": "HelpPanelState",
+      "type": "object",
+      "properties": {
+        "flex": {
+          "title": "Flex",
+          "default": 1.0,
+          "type": "number"
+        },
+        "side": {
+          "title": "Side",
+          "type": "string"
+        },
+        "visible": {
+          "title": "Visible",
+          "type": "boolean"
+        },
+        "size": {
+          "title": "Size",
+          "type": "integer"
+        },
+        "row": {
+          "title": "Row",
+          "type": "integer"
+        },
+        "col": {
+          "title": "Col",
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "LayerListPanelState": {
+      "title": "LayerListPanelState",
+      "type": "object",
+      "properties": {
+        "flex": {
+          "title": "Flex",
+          "default": 1.0,
+          "type": "number"
+        },
+        "side": {
+          "title": "Side",
+          "type": "string"
+        },
+        "visible": {
+          "title": "Visible",
+          "type": "boolean"
+        },
+        "size": {
+          "title": "Size",
+          "type": "integer"
+        },
+        "row": {
+          "title": "Row",
+          "type": "integer"
+        },
+        "col": {
+          "title": "Col",
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
