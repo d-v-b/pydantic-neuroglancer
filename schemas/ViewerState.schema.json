@@ -181,7 +181,7 @@
             "new": "#/definitions/NewLayer"
           }
         },
-        "anyOf": [
+        "oneOf": [
           {
             "$ref": "#/definitions/ImageLayer"
           },
@@ -420,6 +420,9 @@
           "title": "Enabledefaultsubsources",
           "default": true,
           "type": "boolean"
+        },
+        "CoordinateSpaceTransform": {
+          "$ref": "#/definitions/CoordinateSpaceTransform"
         }
       },
       "required": [
@@ -567,10 +570,10 @@
           "title": "Source",
           "anyOf": [
             {
-              "type": "string"
+              "$ref": "#/definitions/LayerDataSource"
             },
             {
-              "$ref": "#/definitions/LayerDataSource"
+              "type": "string"
             },
             {
               "type": "array",
@@ -775,10 +778,10 @@
           "title": "Source",
           "anyOf": [
             {
-              "type": "string"
+              "$ref": "#/definitions/LayerDataSource"
             },
             {
-              "$ref": "#/definitions/LayerDataSource"
+              "type": "string"
             },
             {
               "type": "array",
@@ -1230,10 +1233,10 @@
           "title": "Source",
           "anyOf": [
             {
-              "type": "string"
+              "$ref": "#/definitions/LayerDataSource"
             },
             {
-              "$ref": "#/definitions/LayerDataSource"
+              "type": "string"
             },
             {
               "type": "array",
@@ -1423,10 +1426,10 @@
           "title": "Source",
           "anyOf": [
             {
-              "type": "string"
+              "$ref": "#/definitions/LayerDataSource"
             },
             {
-              "$ref": "#/definitions/LayerDataSource"
+              "type": "string"
             },
             {
               "type": "array",
@@ -1559,10 +1562,10 @@
           "title": "Source",
           "anyOf": [
             {
-              "type": "string"
+              "$ref": "#/definitions/LayerDataSource"
             },
             {
-              "$ref": "#/definitions/LayerDataSource"
+              "type": "string"
             },
             {
               "type": "array",
