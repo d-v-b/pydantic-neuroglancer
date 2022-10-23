@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# copied with modifications from
+# https://github.com/google/neuroglancer/blob/master/python/neuroglancer/url_state.py
+
 import collections
 import json
 import re
