@@ -24,6 +24,7 @@ class Model(BaseModel):
     class Config:
         extra = Extra.forbid
 
+
 class UnitQuaternion(Model):
     pass
 
@@ -217,7 +218,10 @@ class EllipsoidAnnotation(AnnotationBase):
 
 
 Annotations = Union[
-    PointAnnotation, LineAnnotation, EllipsoidAnnotation, AxisAlignedBoundingBoxAnnotation
+    PointAnnotation,
+    LineAnnotation,
+    EllipsoidAnnotation,
+    AxisAlignedBoundingBoxAnnotation,
 ]
 
 
@@ -250,6 +254,7 @@ LayerTypes = Union[
     SingleMeshLayer,
 ]
 
+
 class CrossSection(Model):
     width: int = 1000
     height: int = 1000
@@ -262,6 +267,7 @@ class DataPanelLayout(Model):
     type: str
     crossSections: Dict[str, CrossSection]
     orthographicProjection: Optional[bool]
+
 
 class LayerGroupViewer(Model):
     type: str
@@ -278,9 +284,11 @@ class LayerGroupViewer(Model):
 
 class StackLayout(Model):
     type: Literal["row", "column"]
-    children: List['LayoutSpecification']
+    children: List["LayoutSpecification"]
+
 
 LayoutSpecification = Union[str, StackLayout, LayerGroupViewer, DataPanelLayout]
+
 
 class ViewerState(Model):
     title: Optional[str]
@@ -312,8 +320,10 @@ class ViewerState(Model):
     layerListPanel: LayerListPanelState
     partialViewport: Optional[Tuple[float, float, float, float]] = (0, 0, 1, 1)
 
+
 def main():
     print(ViewerState.schema_json(indent=2))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
