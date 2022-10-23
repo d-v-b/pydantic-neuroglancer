@@ -131,10 +131,11 @@ def url_fragment_to_json(fragment_value):
 
 def parse_url_fragment(fragment_value):
     json_string = url_fragment_to_json(fragment_value)
+    json_blob = json.loads(json_string)
     try:
-        vs = ViewerState(**json.loads(json_string))
+        vs = ViewerState(**json_blob)
     except ValidationError as e:
-        print(json.dumps(json.loads(json_string), indent=2))
+        print(json.dumps(json_blob, indent=2))
         raise e
     return vs
 

@@ -122,10 +122,11 @@ class LayerDataSource(Model):
     transform: CoordinateSpaceTransform | None
     subsources: dict[str, bool] | None
     enableDefaultSubsources: bool | None = True
+    CoordinateSpaceTransform: CoordinateSpaceTransform | None
 
 
 class Layer(Model):
-    source: str | LayerDataSource | list[str | LayerDataSource]
+    source: LayerDataSource | str | list[str | LayerDataSource]
     name: str
     visible: bool | None
     tab: str | None
