@@ -1,4 +1,4 @@
-from neuroglancer_json_schemas.url_state import parse_url_fragment, url_fragment_to_json
+from pydantic_neuroglancer.url_state import parse_url_fragment, url_fragment_to_json
 import urllib
 import json
 import pytest
