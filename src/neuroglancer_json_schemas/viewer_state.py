@@ -179,7 +179,9 @@ class SkeletonRenderingOptions(Model):
 
 class SegmentationLayer(Layer):
     type: Literal["segmentation"]
-    segments: list[str | int] | None # the order of the types in the union matters -- str | int works, but int | str does not
+    segments: list[
+        str | int
+    ] | None  # the order of the types in the union matters -- str | int works, but int | str does not
     equivalences: dict[int, int] | None
     hideSegmentZero: bool | None = True
     selectedAlpha: float | None = 0.5
