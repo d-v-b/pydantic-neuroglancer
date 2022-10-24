@@ -114,7 +114,7 @@ class CoordinateSpaceTransform(Model):
     outputDimensions: CoordinateSpace
     inputDimensions: CoordinateSpace | None
     sourceRank: int | None
-    matrix: list[list[int]]
+    matrix: list[list[int]] | None
 
 
 class LayerDataSource(Model):
