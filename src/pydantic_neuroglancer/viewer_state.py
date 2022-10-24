@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Extra, Field
 from pydantic.generics import GenericModel
-from typing import Generic, Literal, Tuple, TypeVar, Union
+from typing import Any, Generic, Literal, Tuple, TypeVar, Union
 from typing_extensions import Annotated
 from enum import Enum
 
@@ -148,12 +148,12 @@ class AnnotationLayerOptions(Model):
 
 
 class InvlerpParameters(Model):
-    range: tuple[float, float] | None
-    window: tuple[float, float] | None
+    range: tuple[float, float] | tuple[int, int] | None
+    window: tuple[float, float] | tuple[int, int] | None
     channel: list[int] | None
 
 
-ShaderControls = float | str | InvlerpParameters | dict[str, float]
+ShaderControls = dict[str, float | InvlerpParameters]
 
 
 class NewLayer(Layer):
