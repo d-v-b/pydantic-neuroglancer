@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "neuroglancer-json-schemas"
-version = "0.1.0"
-description = ""
+name = "pydantic-neuroglancer"
+version = "0.1.1"
+description = "Pydantic models for neuroglancer viewer state"
 authors = ["Davis Vann Bennett <davis.v.bennett@gmail.com>"]
 license = "BSD 3-clause"
 
 [tool.poetry.dependencies]
-python = ">3.7,<4"
+python = ">=3.9,<4"
 pydantic = "^1.9.0"
 
 [tool.poetry.dev-dependencies]
