@@ -64,7 +64,7 @@ def encode_json(obj):
 
 
 def encode_json_for_repr(obj):
-    return json.dumps(obj, default=json_encoder_default_for_repr)
+    return json.dumps(obj, default=json_encoder_default)
 
 
 def _convert_string_literal(x, quote_initial, quote_replace, quote_search):
@@ -150,7 +150,7 @@ def parse_url(url):
 
 def to_url_fragment(state: ViewerState):
     json_string = json.dumps(
-        state.json(), separators=(",", ":"), default=json_encoder_default
+        state.dict(), separators=(",", ":"), default=json_encoder_default
     )
     return urllib.parse.quote(json_string, safe="~@#$&()*!+=:;,.?/'")
 
@@ -161,7 +161,7 @@ def to_url(state, prefix=default_neuroglancer_url):
 
 def to_json_dump(state, indent=None, separators=None):
     return json.dumps(
-        to_json(state),
+        state.dict(),
         separators=separators,
         indent=indent,
         default=json_encoder_default,

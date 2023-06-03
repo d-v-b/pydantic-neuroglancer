@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from pydantic import BaseModel, Extra, Field
 from pydantic.generics import GenericModel
-from typing import Any, Generic, Literal, Tuple, TypeVar, Union
+from typing import Generic, Literal, TypeVar, Union
 from typing_extensions import Annotated
 from enum import Enum
 
@@ -14,7 +16,7 @@ NavigationLinkType = Literal["linked", "unlinked", "relative"]
 
 T = TypeVar("T")
 
-Quaternion = Tuple[float, float, float, float]
+Quaternion = tuple[float, float, float, float]
 
 
 class Linked(GenericModel, Generic[T]):
@@ -180,9 +182,7 @@ class SkeletonRenderingOptions(Model):
 
 class SegmentationLayer(Layer):
     type: Literal["segmentation"]
-    segments: list[
-        str | int
-    ] | None  # the order of the types in the union matters -- str | int works, but int | str does not
+    segments: list[str | int] | None  # the order of the types in the union matters
     equivalences: dict[int, int] | None
     hideSegmentZero: bool | None = True
     selectedAlpha: float | None = 0.5
