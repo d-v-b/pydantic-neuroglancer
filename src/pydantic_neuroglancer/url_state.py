@@ -150,13 +150,13 @@ def parse_url(url):
 
 def to_url_fragment(state: ViewerState):
     json_string = json.dumps(
-        state.dict(), separators=(",", ":"), default=json_encoder_default
+        state.dict(exclude_unset=True), separators=(",", ":"), default=json_encoder_default
     )
-    return urllib.parse.quote(json_string, safe="~@#$&()*!+=:;,.?/'")
+    return urllib.parse.quote(json_string, safe=u'~@#$&()*!+=:;.?/\'')
 
 
-def to_url(state, prefix=default_neuroglancer_url):
-    return "%s#!%s" % (prefix, to_url_fragment(state))
+def to_url(state: ViewerState, prefix: str=default_neuroglancer_url):
+    return f"{prefix}/#!{to_url_fragment(state)}"
 
 
 def to_json_dump(state, indent=None, separators=None):
