@@ -1,4 +1,4 @@
-from pydantic_neuroglancer.url_state import parse_url_fragment, url_fragment_to_json
+from pydantic_neuroglancer.url_state import parse_url_fragment, to_url, url_fragment_to_json
 import urllib
 import json
 import pytest
@@ -16,8 +16,12 @@ examples = (
 
 @pytest.mark.parametrize("url", examples)
 def test_fragment_json(url):
-    fragment = urllib.parse.urlparse(url).fragment
+    url_parsed = urllib.parse.urlparse(url)
+    fragment = url_parsed.fragment
     fragment_json = url_fragment_to_json(fragment)
     vs = parse_url_fragment(fragment)
     vs_json = vs.json(exclude_unset=True)
     assert json.loads(vs_json) == json.loads(fragment_json)
+    observed = to_url(vs, prefix=f'{url_parsed.scheme}://{url_parsed.hostname}')
+    expected = url
+    assert observed == expected

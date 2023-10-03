@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Extra, Field
 from pydantic.generics import GenericModel
-from typing import Generic, Literal, TypeVar, Union
+from typing import Generic, Literal, Optional, TypeVar, Union
 from typing_extensions import Annotated
 from enum import Enum
 
@@ -20,8 +20,8 @@ Quaternion = tuple[float, float, float, float]
 
 
 class Linked(GenericModel, Generic[T]):
-    link: NavigationLinkType | None = "linked"
-    value: T | None
+    link: Optional[NavigationLinkType] = "linked"
+    value: Optional[T]
 
 
 class Model(BaseModel):
@@ -69,16 +69,16 @@ class ControlTool(Tool):
 
 
 class SidePanelLocation(Model):
-    flex: float | None = 1.0
-    side: str | None
-    visible: bool | None
-    size: int | None
-    row: int | None
-    col: int | None
+    flex: Optional[float] = 1.0
+    side: Optional[str]
+    visible: Optional[bool]
+    size: Optional[int]
+    row: Optional[int]
+    col: Optional[int]
 
 
 class SelectedLayerState(SidePanelLocation):
-    layer: str | None
+    layer: Optional[str]
 
 
 class StatisticsDisplayState(SidePanelLocation):
@@ -86,7 +86,7 @@ class StatisticsDisplayState(SidePanelLocation):
 
 
 class LayerSidePanelState(SidePanelLocation):
-    tab: str | None
+    tab: Optional[str]
     tabs: list[str]
 
 
@@ -103,7 +103,7 @@ class CoordinateArray(Model):
     labels: list[str]
 
 
-DimensionScale = tuple[float, str] | tuple[None, None, CoordinateArray]
+DimensionScale = Union[tuple[float, str], tuple[None, None, CoordinateArray]]
 
 CoordinateSpace = dict[str, DimensionScale]
 
@@ -114,31 +114,32 @@ class LayerDataSubsource(Model):
 
 class CoordinateSpaceTransform(Model):
     outputDimensions: CoordinateSpace
-    inputDimensions: CoordinateSpace | None
-    sourceRank: int | None
-    matrix: list[list[int]] | None
+    inputDimensions: Optional[CoordinateSpace]
+    sourceRank: Optional[int]
+    matrix: Optional[list[list[int]]]
 
 
 class LayerDataSource(Model):
     url: str
-    transform: CoordinateSpaceTransform | None
-    subsources: dict[str, bool] | None
-    enableDefaultSubsources: bool | None = True
-    CoordinateSpaceTransform: CoordinateSpaceTransform | None
+    transform: Optional[CoordinateSpaceTransform]
+    subsources: Optional[dict[str, bool]]
+    enableDefaultSubsources: Optional[bool] = True
+    CoordinateSpaceTransform: Optional[CoordinateSpaceTransform]
 
 
 class Layer(Model):
-    source: LayerDataSource | str | list[str | LayerDataSource]
+    type: Literal['image', 'annotation', 'segmentation', 'mesh', 'new']
+    source: Union[LayerDataSource, str, list[Union[str, LayerDataSource]]]
+    tab: Optional[str]
     name: str
-    visible: bool | None
-    tab: str | None
-    type: LayerType | None
-    layerDimensions: CoordinateSpace | None
-    layerPosition: float | None
-    panels: list[LayerSidePanelState] | None
-    pick: bool | None
-    tool_bindings: dict[str, Tool] | None
-    tool: Tool | None
+    visible: Optional[bool]
+    type: Optional[LayerType]
+    layerDimensions: Optional[CoordinateSpace]
+    layerPosition: Optional[float]
+    panels: Optional[list[LayerSidePanelState]]
+    pick: Optional[bool]
+    tool_bindings: Optional[dict[str, Tool]]
+    tool: Optional[Tool]
 
 
 class PointAnnotationLayer(Layer):
@@ -146,16 +147,16 @@ class PointAnnotationLayer(Layer):
 
 
 class AnnotationLayerOptions(Model):
-    annotationColor: str | None
+    annotationColor: Optional[str]
 
 
 class InvlerpParameters(Model):
-    range: tuple[float, float] | tuple[int, int] | None
-    window: tuple[float, float] | tuple[int, int] | None
-    channel: list[int] | None
+    range: Union[tuple[float, float], tuple[int, int], None]
+    window: Union[tuple[float, float], tuple[int, int], None]
+    channel: Optional[list[int]]
 
 
-ShaderControls = dict[str, float | InvlerpParameters]
+ShaderControls = dict[str, Union[float, InvlerpParameters]]
 
 
 class NewLayer(Layer):
@@ -163,58 +164,58 @@ class NewLayer(Layer):
 
 
 class ImageLayer(Layer):
-    type: Literal["image"]
-    shader: str | None
-    shaderControls: ShaderControls | None
+    type: Literal["image"] = 'image'
+    shader: Optional[str]
+    shaderControls: Optional[ShaderControls]
     opacity: float = 0.05
-    blend: str | None
-    crossSectionRenderScale: float | None = 1.0
+    blend: Optional[str]
+    crossSectionRenderScale: Optional[float] = 1.0
 
 
 class SkeletonRenderingOptions(Model):
     shader: str
     shaderControls: ShaderControls
-    mode2d: str | None
-    lineWidth2d: float | None = 2.0
-    mode3d: str | None
-    lineWidth3d: float | None = 1.0
+    mode2d: Optional[str]
+    lineWidth2d: Optional[float] = 2.0
+    mode3d: Optional[str]
+    lineWidth3d: Optional[float] = 1.0
 
 
 class SegmentationLayer(Layer):
-    type: Literal["segmentation"]
-    segments: list[str | int] | None  # the order of the types in the union matters
-    equivalences: dict[int, int] | None
-    hideSegmentZero: bool | None = True
-    selectedAlpha: float | None = 0.5
-    notSelectedAlpha: float | None = 0.0
-    objectAlpha: float | None = 1.0
-    saturation: float | None = 1.0
-    ignoreNullVisibleSet: bool | None = True
-    skeletonRendering: SkeletonRenderingOptions | None
-    colorSeed: int | None = 0
-    crossSectionRenderScale: float | None = 1.0
-    meshRenderScale: float | None = 10.0
-    meshSilhouetteRendering: float | None = 0.0
-    segmentQuery: str | None
-    segmentColors: dict[int, str] | None
-    segmentDefaultColor: str | None
-    linkedSegmentationGroup: str | None
-    linkedSegmentationColorGroup: Union[str, Literal[False]] | None
+    type: Literal["segmentation"] = 'segmentation'
+    segments: Union[list[Union[str, int]], None]  # the order of the types in the union matters
+    equivalences: Optional[dict[int, int]]
+    hideSegmentZero: Optional[bool] = True
+    selectedAlpha: Optional[float] = 0.5
+    notSelectedAlpha: Optional[float] = 0.0
+    objectAlpha: Optional[float] = 1.0
+    saturation: Optional[float] = 1.0
+    ignoreNullVisibleSet: Optional[bool] = True
+    skeletonRendering: Optional[SkeletonRenderingOptions]
+    colorSeed: Optional[int] = 0
+    crossSectionRenderScale: Optional[float] = 1.0
+    meshRenderScale: Optional[float] = 10.0
+    meshSilhouetteRendering: Optional[float] = 0.0
+    segmentQuery: Optional[str]
+    segmentColors: Optional[dict[int, str]]
+    segmentDefaultColor: Optional[str]
+    linkedSegmentationGroup: Optional[str]
+    linkedSegmentationColorGroup: Optional[Union[str, Literal[False]]]
 
 
 class MeshLayer(Layer):
-    type: Literal["mesh"]
-    vertexAttributeSources: list[str] | None
+    type: Literal["mesh"] = 'mesh'
+    vertexAttributeSources: Optional[list[str]]
     shader: str
-    vertexAttributeNames: list[str | None] | None
+    vertexAttributeNames: Optional[list[Union[str, None]]]
 
 
 class AnnotationBase(Model):
-    id: str | None
+    id: Optional[str]
     type: str
-    description: str | None
-    segments: list[int] | None
-    props: list[int | str]
+    description: Optional[str]
+    segments: Optional[list[int]]
+    props: list[Union[int, str]]
 
 
 class PointAnnotation(AnnotationBase):
@@ -235,32 +236,30 @@ class EllipsoidAnnotation(AnnotationBase):
 
 
 Annotations = (
-    PointAnnotation
-    | LineAnnotation
-    | EllipsoidAnnotation
-    | AxisAlignedBoundingBoxAnnotation
+    Union[
+        PointAnnotation, LineAnnotation, EllipsoidAnnotation, AxisAlignedBoundingBoxAnnotation]
 )
 
 
 class AnnotationPropertySpec(Model):
     id: str
     type: str
-    description: str | None
-    default: float | str | None
-    enum_values: list[float | str] | None
-    enum_labels: list[str] | None
+    description: Optional[str]
+    default: Union[float, str, None]
+    enum_values: Optional[list[Union[float, str]]]
+    enum_labels: Optional[list[str]]
 
 
 class AnnotationLayer(Layer, AnnotationLayerOptions):
-    type: Literal["annotation"]
-    annotations: list[Annotations] | None
-    annotationProperties: list[AnnotationPropertySpec] | None
-    annotationRelationships: list[str] | None
+    type: Literal["annotation"] = "annotation"
+    annotations: Optional[list[Annotations]]
+    annotationProperties: Optional[list[AnnotationPropertySpec]]
+    annotationRelationships: Optional[list[str]]
     linkedSegmentationLayer: dict[str, str]
     filterBySegmentation: list[str]
-    ignoreNullSegmentFilter: bool | None = True
-    shader: str | None
-    shaderControls: ShaderControls | None
+    ignoreNullSegmentFilter: Optional[bool] = True
+    shader: Optional[str]
+    shaderControls: Optional[ShaderControls]
 
 
 LayerType = Annotated[
@@ -286,7 +285,7 @@ class CrossSection(Model):
 class DataPanelLayout(Model):
     type: str
     crossSections: dict[str, CrossSection]
-    orthographicProjection: bool | None
+    orthographicProjection: Optional[bool]
 
 
 class LayerGroupViewer(Model):
@@ -297,12 +296,12 @@ class LayerGroupViewer(Model):
     crossSectionOrientation: Linked[Quaternion]
     crossSectionScale: Linked[float]
     crossSectionDepth: Linked[float]
-    projectionOrientation: Linked[tuple[float, float, float, float]]
+    projectionOrientation: Linked[Quaternion]
     projectionScale: Linked[float]
     projectionDepth: Linked[float]
 
 
-LayoutSpecification = str | LayerGroupViewer | DataPanelLayout
+LayoutSpecification = Union[str, LayerGroupViewer, DataPanelLayout]
 
 
 class StackLayout(Model):
@@ -311,35 +310,35 @@ class StackLayout(Model):
 
 
 class ViewerState(Model):
-    title: str | None
-    dimensions: CoordinateSpace | None
-    relativeDisplayScales: dict[str, float] | None
-    displayDimensions: list[str] | None
-    position: tuple[float, float, float] | None
-    crossSectionOrientation: Quaternion | None
-    crossSectionScale: float | None
-    crossSectionDepth: float | None
-    projectionScale: float | None
-    projectionDeth: float | None
-    projectionOrientation: Quaternion | None
-    showSlices: bool | None = True
-    showAxisLines: bool | None = True
-    showScaleBar: bool | None = True
-    showDefaultAnnotations: bool | None = True
-    gpuMemoryLimit: int | None
-    systemMemoryLimit: int | None
-    concurrentDownloads: int | None
-    prefetch: bool | None = True
+    title: Optional[str]
+    dimensions: Optional[CoordinateSpace]
+    relativeDisplayScales: Optional[dict[str, float]]
+    displayDimensions: Optional[list[str]]
+    position: Optional[tuple[float, float, float]]
+    crossSectionOrientation: Optional[Quaternion]
+    crossSectionScale: Optional[float]
+    crossSectionDepth: Optional[float]
+    projectionScale: Optional[float]
+    projectionDeth: Optional[float]
+    projectionOrientation: Optional[Quaternion]
+    showSlices: Optional[bool] = True
+    showAxisLines: Optional[bool] = True
+    showScaleBar: Optional[bool] = True
+    showDefaultAnnotations: Optional[bool] = True
+    gpuMemoryLimit: Optional[int]
+    systemMemoryLimit: Optional[int]
+    concurrentDownloads: Optional[int]
+    prefetch: Optional[bool] = True
     layers: list[LayerType]
-    layout: LayoutSpecification
-    crossSectionBackgroundColor: str | None
-    projectionBackgroundColor: str | None
-    selectedLayer: SelectedLayerState | None
-    statistics: StatisticsDisplayState | None
-    helpPanel: HelpPanelState | None
-    layerListPanel: LayerListPanelState | None
-    partialViewport: Quaternion | None = (0, 0, 1, 1)
-    selection: dict[str, int] | None
+    selectedLayer: Optional[SelectedLayerState]
+    layout: LayoutSpecification = '4panel'
+    crossSectionBackgroundColor: Optional[str]
+    projectionBackgroundColor: Optional[str]
+    statistics: Optional[StatisticsDisplayState]
+    helpPanel: Optional[HelpPanelState]
+    layerListPanel: Optional[LayerListPanelState]
+    partialViewport: Optional[Quaternion] = (0, 0, 1, 1)
+    selection: Optional[dict[str, int]]
 
 
 def main():
